@@ -1,0 +1,39 @@
+# Directorios de build
+bin/
+obj/
+out/
+
+# Archivos de configuración local (no deben ir al contenedor)
+appsettings.Development.json
+appsettings.Production.json
+*.user
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vs/
+.vscode/
+*.suo
+*.sln.docstates
+
+# Archivos subidos por usuarios
+wwwroot/uploads/
+
+# Logs
+*.log
+
+# Base de datos local
+*.db
+*.db-shm
+*.db-wal
+
+# Documentación
+README.md
+*.md
+
+# Otros
+.DS_Store
+Thumbs.db

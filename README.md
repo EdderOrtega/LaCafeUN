@@ -7,8 +7,8 @@ Sistema web completo de gestión de cafetería con API REST integrada.
 ### **1. Configuración Inicial**
 
 1. Clonar el repositorio
-2. Configurar archivo de configuración (ver `SECURITY.md`)
-3. Crear base de datos PostgreSQL
+2. Configurar base de datos PostgreSQL local
+3. Configurar archivo `appsettings.Development.json` con tus credenciales locales
 4. Ejecutar migraciones
 5. Iniciar la aplicación
 
@@ -24,7 +24,7 @@ dotnet run
 
 - ✅ .NET 9.0 SDK
 - ✅ PostgreSQL 16+
-- ✅ Configuración local (ver archivo `SECURITY.md` para instrucciones)
+- ✅ Archivo de configuración local (no incluido en el repositorio)
 
 ---
 
@@ -98,7 +98,7 @@ wwwroot/uploads/productos/    (Fotos de productos)
 ```
 
 ### **Producción:**
-Se integra con servicios de almacenamiento en la nube (configuración requerida).
+Se integra con Cloudinary para almacenamiento en la nube.
 
 ---
 
@@ -146,11 +146,25 @@ Ver documentación completa en Swagger: `/api/docs`
 
 ---
 
-## 🚢 DEPLOYMENT
+## 🚀 DEPLOYMENT EN PRODUCCIÓN
 
-Para instrucciones de deployment en producción, contacta al equipo de desarrollo.
+### Deployment en Render
 
-**Nota:** Nunca subas credenciales o información sensible al repositorio público.
+Este proyecto incluye archivos de configuración para deployment en Render:
+
+- **Dockerfile** - Configuración de contenedor Docker
+- **.dockerignore** - Archivos excluidos del build
+- **render.yaml** - Configuración de servicio (opcional)
+
+**Instrucciones detalladas**: Ver archivo `RENDER_DEPLOYMENT.md`
+
+### Archivos necesarios para deployment:
+```
+✅ Dockerfile                  (Incluido)
+✅ .dockerignore              (Incluido)
+✅ render.yaml                (Incluido - opcional)
+✅ RENDER_DEPLOYMENT.md       (Guía paso a paso)
+```
 
 ---
 
@@ -158,8 +172,8 @@ Para instrucciones de deployment en producción, contacta al equipo de desarroll
 
 - ⚠️ Este es un proyecto académico/educativo
 - ⚠️ Configura todas las credenciales localmente (no incluidas en el repo)
-- ⚠️ Sigue las mejores prácticas de seguridad para producción
-- ⚠️ Lee `SECURITY.md` para configuración segura
+- ⚠️ Usa variables de entorno para credenciales en producción
+- ⚠️ Nunca subas credenciales o información sensible al repositorio público
 
 ---
 
@@ -171,9 +185,8 @@ Desarrollado para: Universidad del Norte - Proyecto Final POO2
 
 ## 📧 DOCUMENTACIÓN
 
-Para configuración detallada, consulta:
-- `SECURITY.md` - Configuración de seguridad y credenciales
-- Swagger API Documentation: `https://localhost:7174/api/docs`
+- **Local**: Swagger API en `https://localhost:7174/api/docs`
+- **Deployment**: Ver `RENDER_DEPLOYMENT.md` para instrucciones de producción
 
 ---
 
