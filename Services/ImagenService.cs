@@ -22,54 +22,88 @@ namespace ProyectoFinalPOO2.Services
             var apiKey = configuration["Cloudinary:ApiKey"];
             var apiSecret = configuration["Cloudinary:ApiSecret"];
 
-            if (string.IsNullOrEmpty(cloudName))
+            _logger.LogInformation($"[Cloudinary] Configurando con CloudName: {cloudName}");
+
+            if (string.IsNullOrEmpty(cloudName) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
             {
-                _logger.LogWarning("Cloudinary no configurado. Las imágenes no se subirán.");
+                _logger.LogWarning("❌ Cloudinary NO configurado. Faltan credenciales.");
                 _cloudinary = null!;
                 return;
             }
 
-            var account = new Account(cloudName, apiKey, apiSecret);
-            _cloudinary = new Cloudinary(account);
+            try
+            {
+                var account = new Account(cloudName, apiKey, apiSecret);
+                _cloudinary = new Cloudinary(account);
+                _logger.LogInformation("✅ Cloudinary configurado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "❌ Error al configurar Cloudinary");
+                _cloudinary = null!;
+            }
         }
 
         public async Task<string> SubirImagenAsync(IFormFile archivo, string carpeta = "usuarios")
         {
             if (_cloudinary == null)
             {
-                _logger.LogWarning("Cloudinary no configurado, generando avatar por defecto");
+                _logger.LogWarning("⚠️ Cloudinary no configurado, generando avatar por defecto");
                 return $"https://ui-avatars.com/api/?name=Usuario&background=831D81&color=fff&size=200";
             }
 
             try
             {
+                _logger.LogInformation($"📤 Subiendo imagen a Cloudinary. Carpeta: {carpeta}, Archivo: {archivo.FileName}");
+                
                 using var stream = archivo.OpenReadStream();
                 
+                // Configurar transformación según el tipo de carpeta
+                var transformation = new Transformation()
+                    .Width(500)
+                    .Height(500)
+                    .Crop("fill")
+                    .Quality("auto");
+
+                // Solo usar gravity:face para usuarios, NO para productos
+                if (carpeta == "usuarios")
+                {
+                    transformation = transformation.Gravity("face");
+                }
+                else
+                {
+                    // Para productos, usar gravity:center
+                    transformation = transformation.Gravity("center");
+                }
+
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(archivo.FileName, stream),
                     Folder = $"lacafe/{carpeta}",
-                    Transformation = new Transformation()
-                        .Width(500)
-                        .Height(500)
-                        .Crop("fill")
-                        .Gravity("face")
-                        .Quality("auto")
+                    Transformation = transformation
                 };
 
                 var result = await _cloudinary.UploadAsync(uploadParams);
 
+                _logger.LogInformation($"📊 Cloudinary Response - StatusCode: {result.StatusCode}");
+
                 if (result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
+                    _logger.LogInformation($"✅ Imagen subida exitosamente: {result.SecureUrl}");
                     return result.SecureUrl.ToString();
                 }
 
-                _logger.LogError($"Error al subir imagen a Cloudinary: {result.Error?.Message}");
+                _logger.LogError($"❌ Error al subir imagen a Cloudinary. StatusCode: {result.StatusCode}, Error: {result.Error?.Message}");
                 return string.Empty;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Excepción al subir imagen a Cloudinary");
+                _logger.LogError(ex, "❌ Excepción al subir imagen a Cloudinary");
+                _logger.LogError($"Detalles: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError($"Inner Exception: {ex.InnerException.Message}");
+                }
                 return string.Empty;
             }
         }
