@@ -1,0 +1,64 @@
+@model ProyectoFinalPOO2.Models.Usuario
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        @if (!string.IsNullOrEmpty(Model.FotoPerfil))
+                        {
+                            <img src="@Model.FotoPerfil" alt="Foto de perfil" class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover; border: 4px solid #831D81;" />
+                        }
+                        else
+                        {
+                            <div class="rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 120px; height: 120px; background-color: #831D81; color: white; font-size: 48px; border: 4px solid #F1592A;">
+                                @Model.Nombre.Substring(0, 1).ToUpper()
+                            </div>
+                        }
+                        <h2 class="fw-bold titulo-seccion">@Model.Nombre</h2>
+                        <p class="text-muted">@Model.Email</p>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded form-container">
+                                <h6 class="fw-bold mb-2 subtitulo">Información de la cuenta</h6>
+                                <p class="mb-1"><strong>Nombre:</strong> @Model.Nombre</p>
+                                <p class="mb-1"><strong>Email:</strong> @Model.Email</p>
+                                <p class="mb-0"><strong>Miembro desde:</strong> @Model.FechaRegistro.ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                                <h6 class="fw-bold mb-2 subtitulo">Acciones rápidas</h6>
+                                <div class="d-grid gap-2">
+                                    <a asp-controller="Menu" asp-action="Index" class="btn btn-sm btn-outline-secondary">📋 Ver Menú</a>
+                                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-sm btn-outline-secondary">🛒 Hacer Pedido</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-cafeteria btn-lg px-5">
+                                🚪 Cerrar Sesión
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <a asp-controller="Home" asp-action="Dashboard" class="text-muted">← Volver al inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

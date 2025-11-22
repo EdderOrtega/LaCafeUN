@@ -1,0 +1,17 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=lacafe_db;Username=postgres;Password=TU_PASSWORD_AQUI;Port=5432"
+  },
+  "Cloudinary": {
+    "CloudName": "",
+    "ApiKey": "",
+    "ApiSecret": ""
+  }
+}

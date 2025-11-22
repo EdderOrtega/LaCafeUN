@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-cafeteria fade-in">
+    <div class="text-center mb-5">
+        <h1 class="titulo-seccion">☕ Bienvenido @ViewBag.UsuarioNombre</h1>
+        <img class="img-linci" src="/images/linciBarista.png" alt="linciMascota" width="400" />
+        <p class="lead text-muted">El mejor café y comida para estudiantes y profesores</p>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-4 text-center mb-4">
+            <div class="producto-card h-100">
+                <div class="display-4 mb-3" style="color: var(--color-principal);">📋</div>
+                <h4 class="subtitulo">Ver Menú</h4>
+                <p>Explora todos nuestros deliciosos productos disponibles</p>
+                <a href="/Menu" class="btn btn-cafeteria">Ver Menú Completo</a>
+            </div>
+        </div>
+        
+        <div class="col-md-4 text-center mb-4">
+            <div class="producto-card h-100">
+                <div class="display-4 mb-3" style="color: var(--color-secundario);">🛒</div>
+                <h4 class="subtitulo">Ver Pedidos</h4>
+                <p>Mira los pedidos de los clientes rapidamente</p>
+                <a href="/Pedidos" class="btn btn-cafeteria">Ver Pedidos</a>
+            </div>
+        </div>
+        
+        <div class="col-md-4 text-center mb-4">
+            <div class="producto-card h-100">
+                <div class="display-4 mb-3" style="color: var(--color-principal);">➕</div>
+                <h4 class="subtitulo">Administrar</h4>
+                <p>Agrega nuevos productos al menú (Solo personal autorizado)</p>
+                <a href="/AgregarProducto" class="btn btn-cafeteria">Agregar Producto</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-container">
+                <h3 class="subtitulo">🕒 Horarios de Atención</h3>
+                <ul class="list-unstyled">
+                    <li><strong>Lunes a Viernes:</strong> 8:00 AM - 10:00 PM</li><br>
+                    <li><strong>Sábados:</strong> 8:00 AM - 3:00 PM</li><br>
+                    <li><strong>Domingos:</strong> Cerrado</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="form-container">
+                <h3 class="subtitulo">📍 Ubicación</h3>
+                <p>
+                    <strong>Edificio Principal - Planta Baja</strong><br>
+                    Junto a la palapa central
+                </p>
+                <p>
+                    📞 <strong>Teléfono:</strong> 81 2624 970<br>
+                    📧 <strong>Email:</strong> lacafe@un.edu.mx
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <h3 class="subtitulo">🎓 ¡Especialistas en alimentar mentes brillantes!</h3>
+        <p class="text-muted">Ofrecemos productos frescos y de calidad para toda la comunidad universitaria</p>
+    </div>
+</div>

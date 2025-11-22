@@ -1,0 +1,135 @@
+@{
+    ViewData["Title"] = "Ver Menú";
+}
+
+<div class="container-cafeteria fade-in">
+    <h1 class="titulo-seccion">📋 Menú de la Cafetería</h1>
+    <p class="text-center text-muted mb-4">Descubre todos nuestros deliciosos productos</p>
+    
+    @if (ViewBag.ProductosAgrupados != null && ((Dictionary<string, List<Producto>>)ViewBag.ProductosAgrupados).Any())
+    {
+        <div class="menu-grid">
+            @foreach (var categoria in (Dictionary<string, List<Producto>>)ViewBag.ProductosAgrupados)
+            {
+                <div class="menu-categoria-container">
+                    <div class="menu-categoria">
+                        @{
+                            string icono = categoria.Key switch
+                            {
+                                "Bebidas Calientes" => "☕",
+                                "Bebidas Frías" => "🧊",
+                                "Comida" => "🍽️",
+                                "Panadería" => "🥐",
+                                "Postres" => "🍰",
+                                "Snacks" => "🥨",
+                                _ => "🍴"
+                            };
+                        }
+                        @icono @categoria.Key
+                    </div>
+                    <div class="menu-items">
+                        @foreach (var producto in categoria.Value)
+                        {
+                            <div class="menu-item">
+                                <div class="row align-items-center">
+                                    @if (!string.IsNullOrEmpty(producto.ImagenUrl))
+                                    {
+                                        <div class="col-md-3 col-sm-4 mb-2 mb-md-0">
+                                            <img src="@producto.ImagenUrl" alt="@producto.Nombre" class="menu-item-image img-fluid rounded" />
+                                        </div>
+                                        <div class="col-md-9 col-sm-8">
+                                            <h5 class="producto-titulo mb-1">@producto.Nombre</h5>
+                                            <p class="producto-descripcion mb-2">@producto.Descripcion</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="producto-precio">$@producto.Precio.ToString("N0")</span>
+                                                <div>
+                                                    @if (producto.Disponible)
+                                                    {
+                                                        <span class="badge bg-success ms-2">Disponible</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger ms-2">No disponible</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-12">
+                                            <h5 class="producto-titulo mb-1">@producto.Nombre</h5>
+                                            <p class="producto-descripcion mb-2">@producto.Descripcion</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="producto-precio">$@producto.Precio.ToString("N0")</span>
+                                                <div>
+                                                    @if (producto.Disponible)
+                                                    {
+                                                        <span class="badge bg-success ms-2">Disponible</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger ms-2">No disponible</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <div class="alert alert-info">
+                <h4>📋 Menú en construcción</h4>
+                <p>Aún no tenemos productos en nuestro menú. ¡Pronto tendremos deliciosas opciones para ti!</p>
+                <a href="/AgregarProducto" class="btn btn-cafeteria mt-3">
+                    ➕ Agregar Primer Producto
+                </a>
+            </div>
+        </div>
+    }
+    
+    <div class="text-center mt-4">
+        <a href="/AgregarProducto" class="btn btn-cafeteria me-3">
+            ➕ Agregar Producto
+        </a>
+        <a href="/Pedidos" class="btn btn-outline-primary">
+            🛒 Hacer Pedido
+        </a>
+    </div>
+</div>
+
+<style>
+.menu-categoria-container {
+    margin-bottom: 20px;
+}
+
+.menu-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.menu-item:last-child {
+    border-bottom: none;
+}
+
+.menu-item-image {
+    width: 100%;
+    max-width: 200px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--color-gris-claro);
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+</style>

@@ -1,0 +1,55 @@
+# COMANDOS DE MIGRACIÓN - LA CAFE
+
+## COMANDOS BÁSICOS
+
+# Aplicar todas las migraciones
+dotnet ef database update
+
+# Crear nueva migración
+dotnet ef migrations add NombreDeLaMigracion
+
+# Revertir a una migración específica
+dotnet ef database update NombreDeLaMigracionAnterior
+
+# Eliminar última migración (sin aplicar)
+dotnet ef migrations remove
+
+# Eliminar base de datos completa
+dotnet ef database drop
+
+
+## COMANDOS DE DIAGNÓSTICO
+
+# Ver migraciones aplicadas
+dotnet ef migrations list
+
+# Ver información de la base de datos
+dotnet ef dbcontext info
+
+
+## EJEMPLOS PRÁCTICOS
+
+# 1. Crear migración para nuevos usuarios
+dotnet ef migrations add AgregarUsuarios
+
+# 2. Aplicar la migración
+dotnet ef database update
+
+# 3. Si necesitas revertir
+dotnet ef database update MigracionAnterior
+
+
+## SOLUCIÓN DE PROBLEMAS
+
+# Si hay errores de compilación
+dotnet clean
+dotnet build
+dotnet ef database update
+
+# Si la base de datos está corrupta
+dotnet ef database drop --force
+dotnet ef database update
+
+
+## NOTA IMPORTANTE
+Ejecuta siempre "dotnet ef database update" antes de iniciar la app por primera vez

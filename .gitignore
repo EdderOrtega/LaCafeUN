@@ -1,0 +1,65 @@
+# .NET Build
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+
+# Visual Studio
+.vs/
+*.vsidx
+*.v2
+.vscode/
+
+# Entity Framework
+Migrations/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# ⚠️ ARCHIVOS SENSIBLES - NO SUBIR A GITHUB
+appsettings.Development.json
+appsettings.Production.json
+*.ps1
+
+# Archivos MD con información sensible
+REVISION_COMPLETA.md
+CLOUDINARY_RESUMEN.md
+CLOUDINARY_SETUP.md
+DATABASE_NOTES.md
+RENDER_SETUP.md
+MIGRACION_POSTGRESQL.md
+INSTALAR_POSTGRESQL.md
+GUIA_INSTALACION_EDB.md
+ERRORES_CORREGIDOS.md
+COMPILACION_Y_API.md
+NOTA_REINICIAR_APP.md
+
+# Uploads (imágenes de usuarios)
+wwwroot/uploads/**/*
+!wwwroot/uploads/.gitkeep
+!wwwroot/uploads/*/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# IDE
+.idea/
+*.iml
+
+# Logs
+logs/
+*.log

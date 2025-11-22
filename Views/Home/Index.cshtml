@@ -1,0 +1,275 @@
+﻿@{
+    ViewData["Title"] = "Bienvenido";
+    Layout = "~/Views/Shared/_LandingLayout.cshtml";
+}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <!-- Bienvenidos primero -->
+                <h1 class="display-3 fw-bold text-white mb-4">¡Bienvenidos!</h1>
+                
+                <!-- Logo L A  C A FÉ en grande -->
+                <div class="logo-custom mb-4">
+                    <span class="logo-l">L</span><span class="logo-a">A</span>
+                    <span class="logo-c">C</span><span class="logo-a2">A</span><span class="logo-fe">FÉ</span>
+                </div>
+                
+                <!-- Subtexto -->
+                <p class="lead text-white mb-5 mx-auto" style="max-width: 700px;">
+                    El mejor café y comida para toda la comunidad universitaria. Sabor, calidad y tradición en cada bocado.
+                </p>
+                
+                <!-- Imagen de Linci centrada -->
+                <div class="mb-4">
+                    <img src="/images/linciBarista.png" alt="Mascota La Cafe" class="img-fluid hero-image" style="max-width: 350px;">
+                </div>
+                
+                <!-- Botones abajo de la imagen -->
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-morado btn-lg px-5 py-3">
+                        <i class="bi bi-person-circle me-2"></i>Iniciar Sesión
+                    </a>
+                    <a href="@Url.Action("Registro", "Account")" class="btn btn-naranja btn-lg px-5 py-3">
+                        <i class="bi bi-person-plus me-2"></i>Registrarse
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categorías de Productos -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-white titulo-seccion">Nuestras Especialidades</h2>
+            <p class="lead text-white  fw-bold">Descubre los mejores sabores de La Cafe</p>
+        </div>
+
+        @{
+            var productosAgrupados = ViewBag.ProductosAgrupados as Dictionary<string, List<ProyectoFinalPOO2.Models.Producto>>;
+            if (productosAgrupados != null && productosAgrupados.Any())
+            {
+                foreach (var categoria in productosAgrupados)
+                {
+                    <div class="mb-5">
+                        <h3 class="mb-4 text-center text-white subtitulo">
+                            @if (categoria.Key == "Bebidas Calientes" || categoria.Key == "Bebidas Frías") { <text>☕</text> }
+                            else if (categoria.Key == "Comida") { <text>🍔</text> }
+                            else if (categoria.Key == "Postres") { <text>🍰</text> }
+                            else if (categoria.Key == "Snacks") { <text>🍿</text> }
+                            @categoria.Key
+                        </h3>
+                        <div class="row row-cols-1 row-cols-md-3 g-4">
+                            @foreach (var producto in categoria.Value)
+                            {
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm hover-card">
+                                        @if (!string.IsNullOrEmpty(producto.ImagenUrl))
+                                        {
+                                            <img src="@producto.ImagenUrl" class="card-img-top" alt="@producto.Nombre" style="height: 400px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #831D81 0%, #F1592A 100%);">
+                                                <span class="display-1">
+                                                    @if (categoria.Key.Contains("Bebidas")) { <text>☕</text> }
+                                                    else if (categoria.Key == "Comida") { <text>🍔</text> }
+                                                    else if (categoria.Key == "Postres") { <text>🍰</text> }
+                                                    else { <text>🍽️</text> }
+                                                </span>
+                                            </div>
+                                        }
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold producto-titulo">@producto.Nombre</h5>
+                                            <p class="card-text text-muted">@producto.Descripcion</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="h4 mb-0 producto-precio">$@producto.Precio.ToString("F2")</span>
+                                                <span class="badge bg-success">Disponible</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <p class="lead text-muted">Estamos preparando nuestro menú. ¡Vuelve pronto!</p>
+                </div>
+            }
+        }
+
+        <div class="text-center mt-5">
+            <a href="@Url.Action("Login", "Account")" class="btn btn-cafeteria btn-lg px-5">
+                Inicia Sesión para Ordenar
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Información Adicional -->
+<section class="py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 text-center mb-4">
+                <div class="p-4">
+                    <div class="display-4 mb-3" style="color: #831D81;">🕒</div>
+                    <h4 class="fw-bold mb-3 subtitulo text-dark">Horarios</h4>
+                    <p class="mb-1 text-dark"><strong>Lunes a Viernes:</strong> 8:00 AM - 10:00 PM</p>
+                    <p class="mb-1 text-dark"><strong>Sábados:</strong> 8:00 AM - 5:00 PM</p>
+                    <p class="text-dark"><strong>Domingos:</strong> Cerrado</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="p-4">
+                    <div class="display-4 mb-3" style="color: #831D81;">📍</div>
+                    <h4 class="fw-bold mb-3 subtitulo text-dark">Ubicación</h4>
+                    <p class="text-dark"><strong>Edificio Principal - Planta Baja</strong></p>
+                    <p class="text-dark">Junto a la palapa central</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="p-4">
+                    <div class="display-4 mb-3" style="color: #831D81;">📞</div>
+                    <h4 class="fw-bold mb-3 subtitulo text-dark">Contacto</h4>
+                    <p class="mb-1 text-dark">📞 (81) 8851-7100</p>
+                    <p class="text-dark">📧 lacafe@un.edu.mx</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #831D81 0%, #F1592A 100%);
+        padding: 20px 0 80px 0;
+        margin-bottom: 50px;
+    }
+
+    .logo-custom {
+        font-size: 5.5rem;
+        font-weight: 900;
+        letter-spacing: 0.15em;
+        line-height: 1;
+        margin-bottom: 1rem;
+    }
+
+    /* L morada con borde blanco */
+    .logo-l {
+        color: #831D81;
+        -webkit-text-stroke: 1px white;
+    }
+
+    /* A con gradiente morado a naranja (izquierda a derecha) + borde blanco */
+    .logo-a {
+        background: linear-gradient(to right, #831D81, #F1592A);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(1px 0 0 white) drop-shadow(-1px 0 0 white) drop-shadow(0 1px 0 white) drop-shadow(0 -1px 0 white);
+    }
+
+
+
+    /* C morada con borde blanco */
+    .logo-c {
+        color: #831D81;
+        -webkit-text-stroke: 1px white;
+    }
+
+    /* A con gradiente morado a naranja (izquierda a derecha) + borde blanco */
+    .logo-a2 {
+        background: linear-gradient(to right, #831D81, #F1592A);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(1px 0 0 white) drop-shadow(-1px 0 0 white) drop-shadow(0 1px 0 white) drop-shadow(0 -1px 0 white);
+    }
+
+    /* FÉ morada con borde blanco */
+    .logo-fe {
+        color: #831D81;
+        -webkit-text-stroke: 1px white;
+    }
+
+    .hero-section h1,
+    .hero-section p,
+    .hero-section .lead {
+        color: white !important;
+    }
+
+    .hero-image {
+        animation: float 3s ease-in-out infinite;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+    }
+
+    @@keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    .btn-morado {
+        background: #831D81;
+        color: white;
+        border: 3px solid #831D81;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+        .btn-morado:hover {
+            background: #F1592A;
+            border-color: #F1592A;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(241, 89, 42, 0.4);
+        }
+
+    .btn-naranja {
+        background: #F1592A;
+        color: white;
+        border: 3px solid #F1592A;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+        .btn-naranja:hover {
+            background: #831D81;
+            border-color: #831D81;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(131, 29, 129, 0.4);
+        }
+
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 2px solid #f8f9fa;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(131, 29, 129, 0.3) !important;
+            border-color: #F1592A;
+        }
+
+    .card-img-top {
+        border-radius: 15px 15px 0 0;
+
+    }
+</style>
