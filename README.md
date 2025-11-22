@@ -4,21 +4,17 @@ Sistema web completo de gestión de cafetería con API REST integrada.
 
 ## 🚀 INICIO RÁPIDO
 
-### **1. Crear Base de Datos**
-```powershell
-.\CrearBDFinal.ps1
-```
+### **1. Configuración Inicial**
 
-Este script:
-- ✅ Elimina BD anterior (si existe)
-- ✅ Crea nueva BD `lacafe_db`
-- ✅ Crea carpetas de uploads
-- ✅ Aplica migraciones
-- ✅ Inserta datos iniciales
-- ✅ Inicia la aplicación
+1. Clonar el repositorio
+2. Configurar archivo de configuración (ver `SECURITY.md`)
+3. Crear base de datos PostgreSQL
+4. Ejecutar migraciones
+5. Iniciar la aplicación
 
-### **2. Si Ya Tienes la BD Creada**
 ```powershell
+dotnet restore
+dotnet ef database update
 dotnet run
 ```
 
@@ -27,12 +23,12 @@ dotnet run
 ## 🔧 REQUISITOS
 
 - ✅ .NET 9.0 SDK
-- ✅ PostgreSQL 16+ (puerto 5433)
-- ✅ Password PostgreSQL: `root#12345`
+- ✅ PostgreSQL 16+
+- ✅ Configuración local (ver archivo `SECURITY.md` para instrucciones)
 
 ---
 
-## 🌐 URLS PRINCIPALES
+## 🌐 URLS PRINCIPALES (Desarrollo Local)
 
 | Servicio | URL |
 |----------|-----|
@@ -47,25 +43,12 @@ dotnet run
 
 ---
 
-## 👤 CREDENCIALES DE PRUEBA
-
-### **Administrador:**
-```
-Email:    admin@lacafe.com
-Password: admin123
-Tipo:     Administrador
-```
-
----
-
 ## 📊 ESTRUCTURA DE LA BASE DE DATOS
 
 ```
 lacafe_db (PostgreSQL)
 ├─ Administradores
-│  └─ 1 registro inicial (admin@lacafe.com)
 ├─ Usuarios
-│  └─ Se llenan con registros
 ├─ CategoriasProducto
 │  ├─ Bebidas Calientes ☕
 │  ├─ Bebidas Frías 🥤
@@ -73,15 +56,12 @@ lacafe_db (PostgreSQL)
 │  ├─ Postres 🍰
 │  └─ Snacks 🍿
 ├─ Productos
-│  └─ Se llenan desde /AgregarProducto
 ├─ FormasDePago
 │  ├─ Efectivo
 │  ├─ Tarjeta
 │  └─ Transferencia
 ├─ Pedidos
-│  └─ Se crean desde la API
 └─ DetallesPedidos
-   └─ Detalles de cada pedido
 ```
 
 ---
@@ -91,7 +71,7 @@ lacafe_db (PostgreSQL)
 ### **Web (MVC):**
 - ✅ Landing page con productos
 - ✅ Registro de usuarios/administradores
-- ✅ Login con tipo de cuenta (Usuario/Admin)
+- ✅ Login con autenticación
 - ✅ Dashboard personalizado
 - ✅ Ver menú completo por categorías
 - ✅ Agregar productos con imágenes
@@ -111,81 +91,37 @@ lacafe_db (PostgreSQL)
 ## 📸 GESTIÓN DE IMÁGENES
 
 ### **Desarrollo (Local):**
+Las imágenes se guardan localmente en:
 ```
-wwwroot/
-└─ uploads/
-   ├─ usuarios/     (Fotos de perfil)
-   └─ productos/    (Fotos de productos)
+wwwroot/uploads/usuarios/     (Fotos de perfil)
+wwwroot/uploads/productos/    (Fotos de productos)
 ```
 
-### **Producción (Render):**
-- Se suben automáticamente a **Cloudinary**
-- Configurar variables de entorno en Render
+### **Producción:**
+Se integra con servicios de almacenamiento en la nube (configuración requerida).
 
 ---
 
-## 🧪 PROBAR LA APLICACIÓN
+## 🧪 FLUJO DE USO
 
-### **1. Registrar Usuario:**
-1. Ve a: `https://localhost:7174/Account/Registro`
-2. Selecciona tipo: **Usuario** o **Administrador**
-3. Llena el formulario
-4. Sube foto de perfil (opcional)
-5. Clic en "Crear Cuenta"
-
-### **2. Login:**
-1. Ve a: `https://localhost:7174/Account/Login`
-2. Selecciona tipo de cuenta
-3. Ingresa credenciales
-4. Accede al Dashboard
-
-### **3. Agregar Producto:**
-1. Inicia sesión como Admin
-2. Ve a: `https://localhost:7174/AgregarProducto`
-3. Llena formulario del producto
-4. Selecciona categoría
-5. Sube imagen del producto
-6. Clic en "Agregar Producto"
-
-### **4. Crear Pedido (API):**
-```bash
-POST https://localhost:7174/api/Pedidos
-Content-Type: application/json
-
-{
-  "usuarioId": 1,
-  "formaDePagoId": 1,
-  "numeroMesa": "5",
-  "detalles": [
-    {
-      "productoId": 1,
-      "cantidad": 2,
-      "notas": "Sin azúcar"
-    }
-  ]
-}
-```
+1. **Registrar Usuario:** Crear cuenta seleccionando tipo de usuario
+2. **Login:** Acceder con credenciales
+3. **Dashboard:** Ver panel personalizado según tipo de usuario
+4. **Menú:** Explorar productos por categorías
+5. **Pedidos:** Crear y gestionar pedidos vía API
 
 ---
 
 ## 🐛 SOLUCIÓN DE PROBLEMAS
 
-### **Error: Demasiadas redirecciones**
-```
-Solución: Borra las cookies del navegador
-```
-
 ### **Error: No se puede conectar a PostgreSQL**
-```
-1. Verifica que PostgreSQL esté corriendo
-2. Puerto correcto: 5433
-3. Usuario: postgres
-4. Password: root#12345
-```
+- Verifica que PostgreSQL esté ejecutándose
+- Revisa la configuración en tu archivo local de settings
+- Verifica el puerto y credenciales
 
 ### **Error: Base de datos no existe**
 ```powershell
-.\CrearBDFinal.ps1
+dotnet ef database update
 ```
 
 ### **Error al compilar**
@@ -196,68 +132,48 @@ dotnet build
 
 ---
 
-## 📱 INTEGRACIÓN CON APP MAUI
+## 📱 INTEGRACIÓN CON APP MÓVIL
 
-### **URL Base (Desarrollo):**
-```csharp
-public const string ApiUrl = "https://localhost:7174/api";
-```
+La API REST está diseñada para integrarse con aplicaciones móviles (MAUI, Flutter, React Native, etc.)
 
-### **URL Base (Producción):**
-```csharp
-public const string ApiUrl = "https://lacafe-api.onrender.com/api";
-```
+### **Endpoints principales:**
+- `GET /api/Productos` - Obtener listado de productos
+- `POST /api/Usuarios/registro` - Registrar nuevo usuario
+- `POST /api/Pedidos` - Crear nuevo pedido
+- `GET /api/Categorias` - Obtener categorías
 
----
-
-## 🚢 DEPLOY A RENDER
-
-### **1. Subir a GitHub:**
-```bash
-git init
-git add .
-git commit -m "Initial commit - La Cafe"
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/lacafe-backend.git
-git push -u origin main
-```
-
-### **2. Crear Web Service en Render:**
-- **Build Command:** `dotnet publish -c Release -o out`
-- **Start Command:** `cd out && ./ProyectoFinalPOO2`
-
-### **3. Variables de Entorno:**
-```
-ASPNETCORE_ENVIRONMENT=Production
-ConnectionStrings__DefaultConnection=TU_CONNECTION_STRING_POSTGRES
-Cloudinary__CloudName=TU_CLOUD_NAME
-Cloudinary__ApiKey=TU_API_KEY
-Cloudinary__ApiSecret=TU_API_SECRET
-```
+Ver documentación completa en Swagger: `/api/docs`
 
 ---
 
-## 📝 NOTAS IMPORTANTES
+## 🚢 DEPLOYMENT
 
-- ⚠️ Las contraseñas están en texto plano (solo para desarrollo)
-- ⚠️ En producción, implementar hash de contraseñas
-- ⚠️ Configurar CORS según necesidades
-- ⚠️ Revisar `appsettings.Production.json` antes de deploy
+Para instrucciones de deployment en producción, contacta al equipo de desarrollo.
 
----
-
-## 🎓 DESARROLLADO PARA
-
-Universidad del Norte - Proyecto Final POO2
+**Nota:** Nunca subas credenciales o información sensible al repositorio público.
 
 ---
 
-## 📧 SOPORTE
+## 🔒 SEGURIDAD
 
-Para problemas o dudas, revisa la documentación en:
-- `REVISION_COMPLETA.md` - Checklist completo
-- `CLOUDINARY_SETUP.md` - Configuración de Cloudinary
-- Swagger: `https://localhost:7174/api/docs`
+- ⚠️ Este es un proyecto académico/educativo
+- ⚠️ Configura todas las credenciales localmente (no incluidas en el repo)
+- ⚠️ Sigue las mejores prácticas de seguridad para producción
+- ⚠️ Lee `SECURITY.md` para configuración segura
+
+---
+
+## 🎓 PROYECTO ACADÉMICO
+
+Desarrollado para: Universidad del Norte - Proyecto Final POO2
+
+---
+
+## 📧 DOCUMENTACIÓN
+
+Para configuración detallada, consulta:
+- `SECURITY.md` - Configuración de seguridad y credenciales
+- Swagger API Documentation: `https://localhost:7174/api/docs`
 
 ---
 

@@ -1,278 +1,260 @@
-# 🚀 GUÍA DE DEPLOYMENT - GITHUB Y RENDER
+# 🚀 GUÍA DE DEPLOYMENT
 
-## PARTE 1: SUBIR A GITHUB
+## ⚠️ NOTA DE SEGURIDAD
 
-### PASO 1: Crear repositorio en GitHub
-
-1. Ve a: https://github.com
-2. Clic en **"New repository"** (botón verde)
-3. Configura:
-   - **Repository name:** `LaCafePOO2-API`
-   - **Description:** `API REST para sistema de cafetería`
-   - **Visibilidad:** Public
-   - ❌ NO marcar "Add a README file"
-   - ❌ NO marcar "Add .gitignore"
-4. Clic en **"Create repository"**
-
-### PASO 2: Inicializar Git en tu proyecto
-
-Abre PowerShell en la carpeta del proyecto:
-
-```powershell
-cd "C:\Users\rede9\Downloads\LaCafePOO2NET\LaCafePOO2-main"
-
-# Inicializar Git
-git init
-
-# Agregar todos los archivos
-git add .
-
-# Hacer el primer commit
-git commit -m "Initial commit - La Cafe API"
-
-# Conectar con GitHub (reemplaza TU_USUARIO con tu usuario de GitHub)
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/LaCafePOO2-API.git
-
-# Subir a GitHub
-git push -u origin main
-```
-
-### PASO 3: Verificar en GitHub
-
-Recarga la página de tu repositorio en GitHub y deberías ver todos tus archivos.
+Esta guía contiene información general sobre deployment. **Nunca incluyas credenciales reales en archivos públicos.**
 
 ---
 
-## PARTE 2: DEPLOY EN RENDER
+## PARTE 1: PREPARAR EL CÓDIGO PARA PRODUCCIÓN
 
-### PASO 1: Crear cuenta en Render
+### PASO 1: Revisar Seguridad
 
-1. Ve a: https://render.com
-2. Clic en **"Get Started"**
-3. Registrate con tu cuenta de GitHub (recomendado)
+Antes de subir código a GitHub, verifica:
 
-### PASO 2: Crear PostgreSQL Database
+```bash
+# Ver archivos que se van a subir
+git status
 
-1. En el dashboard de Render, clic en **"New +"**
-2. Selecciona **"PostgreSQL"**
-3. Configura:
-   - **Name:** `lacafe-db`
-   - **Database:** `lacafe_db`
-   - **User:** `lacafe_user`
-   - **Region:** Oregon (US West)
-   - **Plan:** Free
-4. Clic en **"Create Database"**
-5. **IMPORTANTE:** Copia la **Internal Database URL** (la usaremos después)
-
-Ejemplo de URL:
-```
-postgresql://lacafe_user:PASSWORD@dpg-xxx.oregon-postgres.render.com/lacafe_db
+# Verificar que .gitignore está funcionando
+git check-ignore -v appsettings.Development.json
+git check-ignore -v appsettings.Production.json
 ```
 
-### PASO 3: Crear Web Service
+### PASO 2: Subir a GitHub (si aplica)
 
-1. En el dashboard, clic en **"New +"**
-2. Selecciona **"Web Service"**
-3. Conecta tu repositorio de GitHub
-4. Selecciona el repositorio **"LaCafePOO2-API"**
-5. Configura:
+```bash
+# Inicializar repositorio
+git init
 
-```
-Name:              lacafe-api
-Region:            Oregon (US West)
-Branch:            main
-Root Directory:    (dejar vacío)
-Runtime:           .NET
-Build Command:     dotnet publish -c Release -o out
-Start Command:     cd out && dotnet ProyectoFinalPOO2.dll
-Plan:              Free
-```
+# Agregar archivos (solo los que no están en .gitignore)
+git add .
 
-### PASO 4: Configurar Variables de Entorno
+# Crear commit
+git commit -m "Descripción de cambios"
 
-En la sección **"Environment Variables"**, agrega:
+# Conectar con GitHub
+git branch -M main
+git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
 
-**Variable 1:**
-```
-Key:   ConnectionStrings__DefaultConnection
-Value: [PEGA AQUÍ LA INTERNAL DATABASE URL DE TU POSTGRESQL]
+# Subir
+git push -u origin main
 ```
 
-**Variable 2:**
+---
+
+## PARTE 2: DEPLOYMENT EN SERVICIOS EN LA NUBE
+
+### Opciones Populares:
+
+1. **Render** - Free tier disponible, fácil integración con GitHub
+2. **Azure App Service** - Integración con .NET, escalable
+3. **Heroku** - Simple para deployment rápido
+4. **AWS Elastic Beanstalk** - Escalable, profesional
+5. **DigitalOcean App Platform** - Balance precio/funcionalidad
+
+### Requisitos Generales:
+
+Todos los servicios necesitarán:
+
+1. **Base de Datos PostgreSQL** (crear instancia en la nube)
+2. **Variables de Entorno** (configurar credenciales de forma segura)
+3. **Build Configuration** (comandos de compilación)
+4. **Start Command** (comando para iniciar la app)
+
+---
+
+## CONFIGURACIÓN GENÉRICA DE DEPLOYMENT
+
+### **Build Commands (típico para .NET):**
+```bash
+dotnet restore
+dotnet publish -c Release -o out
 ```
-Key:   ASPNETCORE_ENVIRONMENT
-Value: Production
+
+### **Start Command:**
+```bash
+cd out && dotnet NombreDelProyecto.dll
 ```
 
-**Variable 3:**
+### **Variables de Entorno Requeridas:**
+
 ```
-Key:   ASPNETCORE_URLS
-Value: http://0.0.0.0:$PORT
+ASPNETCORE_ENVIRONMENT=Production
+ConnectionStrings__DefaultConnection=<URL_DE_TU_BASE_DE_DATOS>
+Cloudinary__CloudName=<TU_CONFIGURACION>
+Cloudinary__ApiKey=<TU_CONFIGURACION>
+Cloudinary__ApiSecret=<TU_CONFIGURACION>
+ASPNETCORE_URLS=http://0.0.0.0:$PORT
 ```
 
-### PASO 5: Deploy
+**IMPORTANTE:** Estas credenciales deben configurarse en el panel de tu proveedor cloud, **NUNCA en el código**.
 
-1. Clic en **"Create Web Service"**
-2. Render comenzará a buildear tu aplicación (tarda 5-10 minutos)
-3. Espera a que el status sea **"Live"** (verde)
+---
 
-### PASO 6: Aplicar Migraciones
+## PARTE 3: BASE DE DATOS EN PRODUCCIÓN
 
-Una vez que el servicio esté "Live":
+### Opciones de PostgreSQL Cloud:
 
-1. En Render, ve a tu web service
-2. Clic en **"Shell"** (en el menú lateral)
-3. Ejecuta:
+- **Render** - PostgreSQL free tier
+- **ElephantSQL** - Free tier disponible
+- **Supabase** - PostgreSQL gratuito con extras
+- **AWS RDS** - Profesional, escalable
+- **Azure Database for PostgreSQL** - Integración Microsoft
+
+### Después de crear la BD:
+
+1. Obtén la URL de conexión (connection string)
+2. Configúrala como variable de entorno (no en el código)
+3. Ejecuta migraciones:
 
 ```bash
 dotnet ef database update
 ```
 
-Esto creará las tablas en PostgreSQL de Render.
+---
+
+## PARTE 4: VERIFICACIÓN POST-DEPLOYMENT
+
+### URLs a Verificar:
+
+```
+https://tu-app.dominio.com/                    # Página principal
+https://tu-app.dominio.com/api/docs            # Swagger
+https://tu-app.dominio.com/api/Categorias      # Test endpoint
+```
+
+### Checklist Post-Deployment:
+
+- [ ] La aplicación inicia correctamente
+- [ ] Base de datos está conectada
+- [ ] Migraciones aplicadas
+- [ ] API responde correctamente
+- [ ] Swagger accesible (solo si lo deseas en producción)
+- [ ] HTTPS habilitado
+- [ ] Variables de entorno configuradas
+- [ ] Logs funcionando
 
 ---
 
-## PARTE 3: VERIFICAR QUE FUNCIONE
+## PARTE 5: INTEGRACIÓN CON APLICACIONES CLIENTE
 
-### URL de tu API:
-```
-https://lacafe-api.onrender.com
-```
+### Para Apps Móviles (MAUI, Flutter, React Native):
 
-### Swagger (Documentación):
-```
-https://lacafe-api.onrender.com/api/docs
-```
-
-### Probar endpoint de categorías:
-```
-https://lacafe-api.onrender.com/api/Categorias
-```
-
-Deberías ver las 5 categorías en formato JSON.
-
----
-
-## PARTE 4: USAR EN APP MAUI
-
-En tu app MAUI, cambia la URL base:
+Cambia la URL base de desarrollo a producción:
 
 ```csharp
-// ANTES (desarrollo local):
+// DESARROLLO:
 public const string ApiUrl = "https://localhost:7174/api";
 
-// AHORA (producción en Render):
-public const string ApiUrl = "https://lacafe-api.onrender.com/api";
+// PRODUCCIÓN:
+public const string ApiUrl = "https://tu-app.dominio.com/api";
 ```
 
-### Ejemplo de uso:
+### Endpoints Principales:
 
-```csharp
-// Obtener productos
-var response = await httpClient.GetAsync($"{ApiUrl}/Productos");
-var productos = await response.Content.ReadFromJsonAsync<List<Producto>>();
-
-// Registrar usuario
-var nuevoUsuario = new {
-    nombre = "Juan Pérez",
-    email = "juan@example.com",
-    password = "123456",
-    telefono = "8123456789"
-};
-var response = await httpClient.PostAsJsonAsync($"{ApiUrl}/Usuarios/registro", nuevoUsuario);
-
-// Crear pedido
-var pedido = new {
-    usuarioId = 1,
-    formaDePagoId = 1,
-    detalles = new[] {
-        new { productoId = 1, cantidad = 2 },
-        new { productoId = 3, cantidad = 1 }
-    }
-};
-await httpClient.PostAsJsonAsync($"{ApiUrl}/Pedidos", pedido);
+```
+GET  /api/Productos          # Listado de productos
+POST /api/Usuarios/registro  # Registro de usuario
+POST /api/Usuarios/login     # Login
+POST /api/Pedidos           # Crear pedido
+GET  /api/Categorias        # Categorías disponibles
+GET  /api/FormasPago        # Formas de pago
 ```
 
 ---
 
-## 🔄 ACTUALIZAR LA API (Después de hacer cambios)
+## 🔄 ACTUALIZAR LA APLICACIÓN
 
-Cuando hagas cambios en tu código:
+### Workflow típico:
 
-```powershell
-# 1. Agregar cambios
+```bash
+# 1. Hacer cambios en el código local
+# 2. Probar localmente
+dotnet run
+
+# 3. Commit y push
 git add .
-
-# 2. Hacer commit
-git commit -m "Descripción de tus cambios"
-
-# 3. Subir a GitHub
+git commit -m "Descripción de cambios"
 git push
 
-# 4. Render detectará los cambios y redesplegará automáticamente
+# 4. El servicio cloud redesplegará automáticamente (si está configurado)
 ```
 
 ---
 
-## ⚠️ NOTAS IMPORTANTES
+## ⚠️ MEJORES PRÁCTICAS DE SEGURIDAD
 
-### Free Tier de Render:
-- ✅ Gratis permanentemente
-- ⚠️ Se duerme después de 15 minutos de inactividad
-- ⚠️ Primera petición tarda 30-60 segundos en despertar
-- ✅ Perfecto para proyectos estudiantiles
+### ✅ HACER:
+- Usar variables de entorno para credenciales
+- Habilitar HTTPS en producción
+- Implementar autenticación y autorización robusta
+- Hacer hash de contraseñas (bcrypt, SHA-256)
+- Validar inputs del usuario
+- Configurar CORS apropiadamente
+- Usar logs para debugging
+- Mantener dependencias actualizadas
 
-### Base de datos PostgreSQL Free:
-- ✅ 256 MB de almacenamiento
-- ✅ 97 horas de runtime al mes
-- ✅ Suficiente para el proyecto
-
-### Solución al "sleep":
-En tu app MAUI, puedes agregar un loading mientras despierta:
-
-```csharp
-// Mostrar "Conectando con el servidor..."
-// La primera petición tardará más
-```
-
----
-
-## 🎯 CHECKLIST FINAL
-
-- [ ] Crear repositorio en GitHub
-- [ ] Subir código con `git push`
-- [ ] Crear PostgreSQL en Render
-- [ ] Crear Web Service en Render
-- [ ] Configurar variables de entorno
-- [ ] Esperar a que buildee (5-10 min)
-- [ ] Aplicar migraciones en Shell
-- [ ] Probar `/api/docs`
-- [ ] Probar endpoints
-- [ ] Actualizar URL en app MAUI
-- [ ] Compartir URL con compañeros
+### ❌ NO HACER:
+- Subir credenciales a GitHub
+- Dejar Swagger abierto en producción (sin autenticación)
+- Usar contraseñas en texto plano
+- Exponer mensajes de error detallados en producción
+- Olvidar actualizar connection strings
+- Dejar puertos de debug abiertos
 
 ---
 
-## 📱 COMPARTIR CON TUS COMPAÑEROS
+## 📊 MONITOREO Y MANTENIMIENTO
 
-Envíales:
+### Cosas a Monitorear:
 
-**URL de la API:**
-```
-https://lacafe-api.onrender.com
-```
+- Logs de errores
+- Uso de base de datos
+- Tiempo de respuesta de API
+- Almacenamiento de imágenes
+- Tráfico y requests
 
-**Swagger (para probar):**
-```
-https://lacafe-api.onrender.com/api/docs
-```
+### Backups:
 
-**URL para código de MAUI:**
-```csharp
-public const string ApiUrl = "https://lacafe-api.onrender.com/api";
-```
+- Configurar backups automáticos de la base de datos
+- Respaldar configuraciones importantes
+- Documentar procedimientos de recuperación
 
 ---
 
-¡Listo! Ahora tu equipo puede trabajar con la API en internet. 🚀
+## 🎯 CHECKLIST FINAL DE DEPLOYMENT
+
+- [ ] Código subido a repositorio (sin credenciales)
+- [ ] Base de datos en producción creada
+- [ ] Variables de entorno configuradas
+- [ ] Build exitoso
+- [ ] Migraciones aplicadas
+- [ ] Aplicación accessible vía HTTPS
+- [ ] API endpoints funcionando
+- [ ] Subida de imágenes funcionando
+- [ ] Documentado para el equipo
+- [ ] Plan de mantenimiento establecido
+
+---
+
+## 📚 RECURSOS ADICIONALES
+
+- [.NET Deployment Guide](https://docs.microsoft.com/aspnet/core/host-and-deploy/)
+- [PostgreSQL Cloud Providers](https://www.postgresql.org/support/professional_hosting/)
+- [Environment Variables Best Practices](https://12factor.net/config)
+- [HTTPS Configuration](https://docs.microsoft.com/aspnet/core/security/enforcing-ssl)
+
+---
+
+## 💡 CONSEJOS PARA PROYECTOS ACADÉMICOS
+
+- Usa free tiers de servicios cloud
+- Documenta el proceso para tu equipo
+- Mantén un repositorio limpio y organizado
+- Implementa solo features necesarias
+- Prueba exhaustivamente antes de presentar
+
+---
+
+**Recuerda: Un deployment exitoso requiere planificación, seguridad y buenas prácticas.** 🚀
