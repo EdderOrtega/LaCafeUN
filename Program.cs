@@ -73,6 +73,28 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Aplicar migraciones automáticamente en producción
+if (app.Environment.IsProduction())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<CafeteriaContext>();
+            Console.WriteLine("[INFO] Aplicando migraciones de base de datos...");
+            context.Database.Migrate();
+            Console.WriteLine("[INFO] Migraciones aplicadas exitosamente.");
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "Error al aplicar migraciones de base de datos.");
+            throw;
+        }
+    }
+}
+
 // Configurar la aplicación - SWAGGER SIEMPRE HABILITADO
 app.UseDeveloperExceptionPage();
 app.UseSwagger();
