@@ -44,7 +44,8 @@ var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__De
     ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Host=localhost;Database=lacafe_db;Username=postgres;Password=postgres";
 
-Console.WriteLine($"[INFO] Usando connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}...");
+Console.WriteLine($"[INFO] Entorno: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"[INFO] Usando connection string: {connectionString.Substring(0, Math.Min(50, connectionString.Length))}...");
 
 builder.Services.AddDbContext<CafeteriaContext>(options =>
     options.UseNpgsql(connectionString));
@@ -73,25 +74,56 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Aplicar migraciones automáticamente en producción
-if (app.Environment.IsProduction())
+// Aplicar migraciones automáticamente AL INICIO
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    var services = scope.ServiceProvider;
+    try
     {
-        var services = scope.ServiceProvider;
-        try
+        var context = services.GetRequiredService<CafeteriaContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("=== INICIO DE MIGRACIONES ===");
+        Console.WriteLine("[INFO] Verificando estado de la base de datos...");
+        
+        // Verificar si hay migraciones pendientes
+        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+        var appliedMigrations = await context.Database.GetAppliedMigrationsAsync();
+        
+        Console.WriteLine($"[INFO] Migraciones aplicadas: {appliedMigrations.Count()}");
+        Console.WriteLine($"[INFO] Migraciones pendientes: {pendingMigrations.Count()}");
+        
+        if (pendingMigrations.Any())
         {
-            var context = services.GetRequiredService<CafeteriaContext>();
-            Console.WriteLine("[INFO] Aplicando migraciones de base de datos...");
-            context.Database.Migrate();
-            Console.WriteLine("[INFO] Migraciones aplicadas exitosamente.");
+            Console.WriteLine("[INFO] Aplicando migraciones pendientes...");
+            foreach (var migration in pendingMigrations)
+            {
+                Console.WriteLine($"[INFO] - {migration}");
+            }
+            
+            await context.Database.MigrateAsync();
+            Console.WriteLine("[SUCCESS] ✅ Migraciones aplicadas exitosamente!");
         }
-        catch (Exception ex)
+        else
         {
-            var logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "Error al aplicar migraciones de base de datos.");
-            throw;
+            Console.WriteLine("[INFO] No hay migraciones pendientes. Base de datos actualizada.");
         }
+        
+        // Verificar que las tablas existan
+        var canConnect = await context.Database.CanConnectAsync();
+        Console.WriteLine($"[INFO] Conexión a BD: {(canConnect ? "✅ OK" : "❌ FALLO")}");
+        
+        logger.LogInformation("=== FIN DE MIGRACIONES ===");
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "❌ ERROR CRÍTICO al aplicar migraciones de base de datos.");
+        Console.WriteLine($"[ERROR] {ex.Message}");
+        Console.WriteLine($"[ERROR] Stack: {ex.StackTrace}");
+        
+        // En producción, lanzar excepción para que Render vea el error
+        throw;
     }
 }
 
@@ -124,4 +156,5 @@ app.MapControllerRoute(
 // Mapear rutas API
 app.MapControllers();
 
+Console.WriteLine("[INFO] 🚀 Aplicación iniciada correctamente");
 app.Run();
