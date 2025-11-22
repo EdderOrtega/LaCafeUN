@@ -1,0 +1,23 @@
+# 1. Usar la imagen del SDK de .NET para compilar (Build)
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /app
+
+# Copiar el archivo de proyecto y restaurar dependencias
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copiar el resto de los archivos y compilar
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+# 2. Usar la imagen del Runtime para ejecutar (más ligera)
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build /app/out .
+
+# Render asigna el puerto automáticamente en la variable de entorno PORT
+# Esta línea hace que .NET escuche en ese puerto
+ENV ASPNETCORE_URLS=http://+:8080
+
+# Cambia "TuProyecto.dll" por el nombre real que se genera al compilar
+ENTRYPOINT ["dotnet", "ProyectoFinalPOO2.dll"]
