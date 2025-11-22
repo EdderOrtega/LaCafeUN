@@ -12,9 +12,6 @@ obj/
 *.v2
 .vscode/
 
-# Entity Framework
-Migrations/
-
 # User-specific files
 *.rsuser
 *.suo
