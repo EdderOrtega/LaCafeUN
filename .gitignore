@@ -32,6 +32,14 @@ appsettings.Development.json
 appsettings.Production.json
 *.ps1
 
+# ⚠️ DOCUMENTACIÓN CON INFORMACIÓN SENSIBLE
+README.md
+DEPLOYMENT.md
+CONFIGURATION.md
+SECURITY.md
+*.md
+!LICENSE.md
+
 # Archivos MD con información sensible
 REVISION_COMPLETA.md
 CLOUDINARY_RESUMEN.md
@@ -44,6 +52,7 @@ GUIA_INSTALACION_EDB.md
 ERRORES_CORREGIDOS.md
 COMPILACION_Y_API.md
 NOTA_REINICIAR_APP.md
+COMANDOS_MIGRACION.txt
 
 # Uploads (imágenes de usuarios)
 wwwroot/uploads/**/*

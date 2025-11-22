@@ -62,7 +62,6 @@ namespace ProyectoFinalPOO2.Controllers.API
         [HttpPost("registro")]
         public async Task<ActionResult<object>> Registro([FromBody] RegistroRequest request)
         {
-            // Validar que el email no exista
             if (await _context.Usuarios.AnyAsync(u => u.Email == request.Email))
             {
                 return BadRequest(new { message = "El email ya está registrado" });
@@ -72,7 +71,7 @@ namespace ProyectoFinalPOO2.Controllers.API
             {
                 Nombre = request.Nombre,
                 Email = request.Email,
-                Password = request.Password, // TODO: Hashear en producción
+                Password = request.Password,
                 FotoPerfil = request.FotoPerfil ?? $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(request.Nombre)}&background=831D81&color=fff",
                 Activo = true
             };
