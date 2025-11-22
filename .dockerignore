@@ -5,7 +5,6 @@ out/
 
 # Archivos de configuración local (no deben ir al contenedor)
 appsettings.Development.json
-appsettings.Production.json
 *.user
 
 # Git

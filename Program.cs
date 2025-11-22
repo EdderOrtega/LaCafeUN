@@ -39,8 +39,12 @@ builder.Services.AddSession(options =>
 });
 
 // Configurar PostgreSQL
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+// En producción, las variables de entorno tienen prioridad sobre appsettings.json
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Host=localhost;Database=lacafe_db;Username=postgres;Password=postgres";
+
+Console.WriteLine($"[INFO] Usando connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}...");
 
 builder.Services.AddDbContext<CafeteriaContext>(options =>
     options.UseNpgsql(connectionString));
@@ -75,7 +79,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "La Cafe API v1");
-    c.RoutePrefix = "api/docs"; // Acceder en /api/docs
+    c.RoutePrefix = "api/docs";
     c.DocumentTitle = "La Cafe API - Documentación";
 });
 
